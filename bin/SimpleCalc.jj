@@ -1,31 +1,0 @@
-/**
- * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;}PARSER_BEGIN(SimpleCalc)
-public class SimpleCalc{
-    public static void main(String[] args) throws Exception {    int result = new SimpleCalc(new java.io.StringReader(args[0])).S();
-        System.out.println(result);  }}PARSER_END(SimpleCalc)
-
-SKIP:  { " " | "\t" | "\n" | "\r"                    }
-TOKEN: { "(" | ")" | "+" | "*" | <NUM: (["0"-"9"])+> }
-
-int S(): {int sum;}
-{
-  sum=E() <EOF> {return sum;}
-}
-
-int E(): {int sum, x;}
-{
-  sum=T() ("+" x=T() {sum += x;} )* {return sum;}
-}
-
-int T(): {int sum, x;}
-{
-  sum=F() ("*" x=F() {sum *= x;} )* {return sum;}
-}
-
-int F(): {int x; Token n;}
-{
-  n=<NUM> {return Integer.parseInt(n.image);}
-|
-  "(" x=E() ")" {return x;}
-}
