@@ -30,6 +30,8 @@ SKIP :
   < TAB : "\t" >
 | 
   < CR : "\r" >
+|
+ < COMENTARIO  : "//" (~["\r", "\n"])* > {  System.out.print("reconheceu um comentário");}
 }
 
 TOKEN :
@@ -56,7 +58,7 @@ TOKEN :
 |
 < ALFABETO : ["a"-"z","A"-"Z"]>
 |
-< ALFABETO_UNDESCORE : ["a"-"z","A"-"Z","_","-"]>
+< ALFABETO_UNDESCORE : ["a"-"z","A"-"Z","0"-"9","_","-"]>
 |
 < TRUE : "true" >
 |
@@ -67,6 +69,8 @@ TOKEN :
 < ARRAY_END : "]" >
 |
 < VIRGULA : "," >
+|
+< OPERACAO : ["-","+","/","*"]>
 }
 
 void start() :
@@ -74,24 +78,33 @@ void start() :
 }
 {
   declaracao()
+|
+  expressao()
 }
 
 void declaracao() :
 {
 }
 {
-  (< INT > nome_variavel() (< IGUAL > numero_int())? (< VIRGULA > nome_variavel() (< IGUAL > numero_int() )?)* < PV >) { System.out.print("reconheceu uma atribuicao int");}
+  (< INT > nome_variavel() (< IGUAL > numero_int())? (< VIRGULA > nome_variavel() (< IGUAL > numero_int() )?)* < PV >) { System.out.print("reconheceu uma declaracao int ");}
 |
-  ((< FLOAT >| < DOUBLE >)  nome_variavel() (< IGUAL > numero_float() )? (< VIRGULA > nome_variavel() (< IGUAL > numero_float() )?)* < PV >)  { System.out.print("reconheceu uma atribuicao float | double");}
+  ((< FLOAT >| < DOUBLE >)  nome_variavel() (< IGUAL > numero_float() )? (< VIRGULA > nome_variavel() (< IGUAL > numero_float() )?)* < PV >)  { System.out.print("reconheceu uma declaracao float | double ");}
 |
-  (< BOOLEAN > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))? (< VIRGULA > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))?)* < PV >)  { System.out.print("reconheceu uma atribuicao boolean");}
+  (< BOOLEAN > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))? (< VIRGULA > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))?)* < PV >)  { System.out.print("reconheceu uma declaracao boolean ");}
+}
+
+void array() :
+{
+}
+{
+	(< ARRAY_BEGIN > (< DIGITO >)* < ARRAY_END >)* 
 }
 
 void nome_variavel():
 {
 }
 {
-	< ALFABETO >(< ALFABETO_UNDESCORE >)*
+	< ALFABETO >(< ALFABETO_UNDESCORE >)*array()
 }
 
 void numero_int() :
@@ -105,12 +118,19 @@ void numero_float() :
 {
 }
 {
-	numero_int() < PONTO > numero_int()
+	numero_int() (< PONTO > numero_int())?
 }
 
-void array() :
+void valor():
 {
 }
 {
-	< ARRAY_BEGIN > (< DIGITO >)* < ARRAY_END >
+	  numero_float() | < TRUE > | < FALSE >
+}
+
+void expressao():
+{
+}
+{
+	nome_variavel() < IGUAL > (valor() | nome_variavel()) (< OPERACAO > (valor() | nome_variavel()))* < PV > { System.out.print("reconheceu uma expressão "); }
 }
