@@ -1,0 +1,116 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(Compiler)
+public class Compiler
+{
+  public static void main(String args []) throws ParseException
+  {
+    Compiler parser = new Compiler(System.in);
+    while (true)
+    {
+      parser.start();
+    }
+  }
+}
+
+PARSER_END(Compiler)
+
+SKIP :
+{
+  < BRANCO : " " >
+| 
+  < EOL : "\n" >
+| 
+  < TAB : "\t" >
+| 
+  < CR : "\r" >
+}
+
+TOKEN :
+{
+  < PV : ";" >
+| 
+  < MAIS : "+" >
+| 
+  < MENOS : "-" >
+| 
+  < IGUAL : "=" >
+| 
+  < DIGITO : [ "0"-"9" ] >
+| 
+  < PONTO : "." >
+| 
+  < INT : "int" >
+|
+< FLOAT : "float" >
+|
+< DOUBLE : "double" >
+|
+< BOOLEAN : "boolean" >
+|
+< ALFABETO : ["a"-"z","A"-"Z"]>
+|
+< ALFABETO_UNDESCORE : ["a"-"z","A"-"Z","_","-"]>
+|
+< TRUE : "true" >
+|
+< FALSE : "false" >
+|
+< ARRAY_BEGIN : "[">
+| 
+< ARRAY_END : "]" >
+|
+< VIRGULA : "," >
+}
+
+void start() :
+{
+}
+{
+  declaracao()
+}
+
+void declaracao() :
+{
+}
+{
+  (< INT > nome_variavel() (< IGUAL > numero_int())? (< VIRGULA > nome_variavel() (< IGUAL > numero_int() )?)* < PV >) { System.out.print("reconheceu uma atribuicao int");}
+|
+  ((< FLOAT >| < DOUBLE >)  nome_variavel() (< IGUAL > numero_float() )? (< VIRGULA > nome_variavel() (< IGUAL > numero_float() )?)* < PV >)  { System.out.print("reconheceu uma atribuicao float | double");}
+|
+  (< BOOLEAN > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))? (< VIRGULA > nome_variavel() (< IGUAL > (< TRUE >|< FALSE >))?)* < PV >)  { System.out.print("reconheceu uma atribuicao boolean");}
+}
+
+void nome_variavel():
+{
+}
+{
+	< ALFABETO >(< ALFABETO_UNDESCORE >)*
+}
+
+void numero_int() :
+{
+}
+{
+  (< DIGITO >)+
+}
+
+void numero_float() :
+{
+}
+{
+	numero_int() < PONTO > numero_int()
+}
+
+void array() :
+{
+}
+{
+	< ARRAY_BEGIN > (< DIGITO >)* < ARRAY_END >
+}
