@@ -71,6 +71,24 @@ TOKEN :
 < VIRGULA : "," >
 |
 < OPERACAO : ["-","+","/","*"]>
+|
+< PARENTESE_BEGIN : "(">
+| 
+< PARENTESE_END : ")">
+|
+< CONDICIONAL : [">",">=","<","<=","==","!="]>
+|
+< IF : "if">
+|
+< CHAVES_BEGIN : "{">
+|
+< CHAVES_END : "}">
+|
+< AND : "&&">
+|
+< OR : "||">
+|
+<ELSE : "else">
 }
 
 void start() :
@@ -80,6 +98,8 @@ void start() :
   declaracao()
 |
   expressao()
+|
+  if()
 }
 
 void declaracao() :
@@ -133,4 +153,16 @@ void expressao():
 }
 {
 	nome_variavel() < IGUAL > (valor() | nome_variavel()) (< OPERACAO > (valor() | nome_variavel()))* < PV > { System.out.print("reconheceu uma expressão "); }
+}
+
+void if():
+{
+}
+{
+	< IF > < PARENTESE_BEGIN > (nome_variavel() | numero_int() | numero_float() | valor()) < CONDICIONAL > ((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor()))
+	((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor()) < CONDICIONAL > ((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor())))* < PARENTESE_END >
+	<CHAVES_BEGIN>
+	start()
+	<CHAVES_END>
+	( <ELSE> <CHAVES_BEGIN>	start() <CHAVES_END )?
 }
