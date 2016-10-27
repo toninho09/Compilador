@@ -1,5 +1,5 @@
 /**
- * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ * CREATE by Antonio Henrique Lorenzon dos Santos
  */
 options
 {
@@ -170,3 +170,7 @@ void if():
 	<CHAVES_END>
 	( <ELSE> <CHAVES_BEGIN>	start() <CHAVES_END )?
 }
+
+/**
+ * CREATE by Antonio Henrique Lorenzon dos Santos
+ */
