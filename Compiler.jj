@@ -1,5 +1,6 @@
 /**
  * CREATE by Antonio Henrique Lorenzon dos Santos
+
  */
 options
 {
@@ -11,10 +12,9 @@ public class Compiler
 {
   public static void main(String args []) throws ParseException
   {
-    if(args.length == 0){
-	  Compiler parser = new Compiler(System.in);
-	}else if(args.length == 1){
-	  Compiler parser = new Compiler(new java.io.FileInputStream(args[0]));
+	Compiler parser = new Compiler(System.in);
+    if(args.length == 1){
+	 // Compiler parser = new Compiler(new java.io.FileInputStream(args[0]));
 	}
     while (true)
     {
@@ -35,7 +35,7 @@ SKIP :
 | 
   < CR : "\r" >
 |
- < COMENTARIO  : "//" (~["\r", "\n"])* > {  System.out.print("reconheceu um comentário");}
+ < COMENTARIO  : "//" (~["\r", "\n"])* > {  System.out.print("reconheceu um comentÃ¡rio");}
 }
 
 TOKEN :
@@ -82,13 +82,13 @@ TOKEN :
 | 
 < PARENTESE_END : ")">
 |
-< CONDICIONAL : [">",">=","<","<=","==","!="]>
+< CONDICIONAL : (">"|">="|"<"|"<="|"=="|"!=")>
 |
 < IF : "if">
 |
 < CHAVES_BEGIN : "{">
 |
-< CHAVES_END : "}">
+< CHAVES_END : "}"> 
 |
 < AND : "&&">
 |
@@ -105,7 +105,7 @@ void start() :
 |
   expressao()
 |
-  if()
+  if_estrutura()
 }
 
 void declaracao() :
@@ -158,19 +158,19 @@ void expressao():
 {
 }
 {
-	nome_variavel() < IGUAL > (valor() | nome_variavel()) (< OPERACAO > (valor() | nome_variavel()))* < PV > { System.out.print("reconheceu uma expressão "); }
+	nome_variavel() < IGUAL > (valor() | nome_variavel()) (< OPERACAO > (valor() | nome_variavel()))* < PV > { System.out.print("reconheceu uma expressao "); }
 }
 
-void if():
+void if_estrutura():
 {
 }
 {
-	< IF > < PARENTESE_BEGIN > (nome_variavel() | numero_int() | numero_float() | valor()) < CONDICIONAL > ((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor()))
-	((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor()) < CONDICIONAL > ((<AND> | <OR> ) (nome_variavel() | numero_int() | numero_float() | valor())))* < PARENTESE_END >
+	< IF > < PARENTESE_BEGIN > (nome_variavel() |  valor()) < CONDICIONAL >  (nome_variavel() | valor())
+	((<AND> | <OR> ) (nome_variavel() | valor()) < CONDICIONAL > ((<AND> | <OR> ) (nome_variavel() | valor())))* < PARENTESE_END >
 	<CHAVES_BEGIN>
-	start()
-	<CHAVES_END>
-	( <ELSE> <CHAVES_BEGIN>	start() <CHAVES_END )?
+	(start())*
+	<CHAVES_END> { System.out.print("reconheceu um if "); }
+	( <ELSE> <CHAVES_BEGIN>	start() <CHAVES_END > )? { System.out.print("reconheceu um else "); }
 }
 
 /**
